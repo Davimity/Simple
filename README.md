@@ -15,10 +15,10 @@
 
 ## 📚 Libraries
 
-| Library            | Description                                           | Status              |
-|--------------------|-------------------------------------------------------|---------------------|
-| `SimpleEncryption` | Secure encryption utilities for data protection.      | 🚧 In progress      |
-| `SimpleSecureData` | Types for securely managing sensitive data in memory. | 🚧 In progress      |
+| Library                                          | Description                                           | Status              |
+|--------------------------------------------------|-------------------------------------------------------|---------------------|
+| [`SimpleEncryption`](SimpleEncryption/README.md) | Secure encryption utilities for data protection.      | 🚧 In progress      |
+| [`SimpleSecureData`](SimpleSecureData/README.md) | Types for securely managing sensitive data in memory. | 🚧 In progress      |
 
 ---
 
