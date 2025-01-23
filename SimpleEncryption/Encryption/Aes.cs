@@ -7,7 +7,38 @@ namespace SimpleEncryption.Encryption {
     public class Aes {
         #region Variables
 
-            private static readonly ThreadLocal<SAes> AesInstance = new(SAes.Create);
+            private static readonly ThreadLocal<System.Security.Cryptography.Aes> AesInstance = new(() =>{
+                var aes = System.Security.Cryptography.Aes.Create();
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                return aes;
+            });
+
+        #endregion
+
+        #region Properties
+
+            public CipherMode CipherMode {
+                get => GetAesInstance().Mode;
+                set => GetAesInstance().Mode = value;
+            }
+
+            public PaddingMode PaddingMode {
+                get => GetAesInstance().Padding;
+                set => GetAesInstance().Padding = value;
+            }
+
+            public int BlockSize {
+                get => GetAesInstance().BlockSize;
+                set => GetAesInstance().BlockSize = value;
+            }
+
+            public int KeySize {
+                get => GetAesInstance().KeySize;
+                set => GetAesInstance().KeySize = value;
+            }
 
         #endregion
 
@@ -222,23 +253,6 @@ namespace SimpleEncryption.Encryption {
                     }
                 }
             }
-
-
-            /// <summary> Modifies the AES cipher mode for the current thread </summary>
-            /// <param name="mode"> The new cipher mode </param>
-            public static void ModifyCipherMode(CipherMode mode) => GetAesInstance().Mode = mode;
-
-            /// <summary> Modifies the AES padding mode for the current thread </summary>
-            /// <param name="mode"> The new padding mode </param>
-            public static void ModifyPadding(PaddingMode mode) => GetAesInstance().Padding = mode;
-
-            /// <summary> Modifies the AES block size for the current thread </summary>
-            /// <param name="size"> The new block size in bits </param>
-            public static void ModifyBlockSize(int size) => GetAesInstance().BlockSize = size;
-
-            /// <summary> Modifies the AES key size for the current thread </summary>
-            /// <param name="size"> The new key size in bits </param>
-            public static void ModifyKeySize(int size) => GetAesInstance().KeySize = size;
 
             ///<summary> Disposes the AES instance for the current thread </summary>
             ///<remarks> This method should be called when the AES instance is no longer needed for the current thread </remarks>
