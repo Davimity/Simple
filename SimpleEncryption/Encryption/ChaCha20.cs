@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Runtime.Versioning;
 using System.Text;
 
 namespace SimpleEncryption.Encryption {

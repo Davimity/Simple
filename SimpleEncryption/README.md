@@ -1,4 +1,4 @@
-# SimpleEncryption
+﻿# SimpleEncryption
 
 **SimpleEncryption** is a modular library for cryptographic operations, designed to make encryption, hashing, and key derivation simple, flexible, and efficient.
 
@@ -11,8 +11,7 @@
 - **🔑 Hashing**:
   - Secure hashing algorithms: SHA-256 and SHA-512.
 - **🧩 Key Derivation**:
-  - Argon2i, Argon2d, and Argon2id for advanced password hashing.
-  - PBKDF2-based key derivation as a fallback.
+  - PBKDF2 key derivation.
 - **⚙️ Salt and Nonce Generation**:
   - Generate secure salts and nonces dynamically.
 - **💡 Thread-safe and configurable**.
@@ -71,21 +70,22 @@ Console.WriteLine($"SHA-256 Hash: {sha256Hash}");
 Console.WriteLine($"SHA-512 Hash: {sha512Hash}");
 ```
 
-### 🧩 **Argon2 Key Derivation**
+### 🧩 **Pbkdf2 Key Derivation**
 Derive secure keys with Argon2 (i, d, id):
 ```csharp
-using SimpleEncryption.Derivation.Argon2;
+using SimpleEncryption.Derivation;
 
-string argon2Key = Argon2i.DeriveKey("password", "salt", keyLength: 32);
-Console.WriteLine($"Argon2i Derived Key: {argon2Key}");
+string Pbkdf2Key = Pbkdf2.DeriveKey("password", Pbkdf2.GenerateSalt(), keyLength: 32);
+Console.WriteLine($"Pbkdf2 Derived Key: {Pbkdf2Key}");
 ```
 
 ---
 
 ## 🤝 Contributing
-Contributions are welcome! Feel free to open an issue or submit a pull request on [GitHub](https://github.com/your-repo-url).
+Contributions are welcome! Feel free to open an issue or submit a pull request on [GitHub](https://github.com/Davimity/Simple/tree/main/SimpleEncryption).
 
 ---
 
 ## 📜 License
 This project is licensed under the **MIT License**.
+
