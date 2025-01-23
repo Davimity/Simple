@@ -17,7 +17,7 @@
 
 | Library                                          | Description                                           | Status              |
 |--------------------------------------------------|-------------------------------------------------------|---------------------|
-| [`SimpleCryptography`](SimpleCryptography/README.md) | Secure encryption utilities for data protection.      | 🚧 In progress      |
+| [`SimpleCryptography`](SimpleCryptography/README.md) | Secure encryption utilities for data protection.  | ✅ Available      |
 | [`SimpleSecureData`](SimpleSecureData/README.md) | Types for securely managing sensitive data in memory. | 🚧 In progress      |
 
 ---
