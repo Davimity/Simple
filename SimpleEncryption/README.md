@@ -84,6 +84,7 @@ dotnet add package SimpleSecurity
 ### 🧩 **Argon2 Key Derivation**
 - Advanced key derivation algorithms (Argon2i, Argon2d, Argon2id).
 - Configurable parameters for memory usage, iterations, and parallelism.
+- Using Konscious.Security.Cryptography.Argon2 implementation.
 
 #### Features:
 - **Derive Keys** with flexible configurations.
