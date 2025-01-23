@@ -1,6 +1,6 @@
 # 🚀 SimpleCryptography
 
-A **powerful and modular library** for cryptographic operations, including encryption, hashing, and key derivation. SimpleSecurity provides easy-to-use, efficient, and flexible methods to integrate cryptography into your projects.
+A **powerful and modular library** for cryptographic operations, including encryption, hashing, and key derivation. SimpleCryptography provides easy-to-use, efficient, and flexible methods to integrate cryptography into your projects.
 
 ---
 
@@ -38,14 +38,14 @@ A **powerful and modular library** for cryptographic operations, including encry
 
 ## 📦 **Installation**
 
-Install SimpleSecurity via NuGet:
+Install SimpleCryptography via NuGet:
 ```bash
-Install-Package SimpleSecurity
+Install-Package SimpleCryptography
 ```
 
 Or use the .NET CLI:
 ```bash
-dotnet add package SimpleSecurity
+dotnet add package SimpleCryptography
 ```
 
 ---
@@ -96,7 +96,7 @@ dotnet add package SimpleSecurity
 
 ### 🔒 **AES Encryption**
 ```csharp
-using SimpleSecurity.Encryption;
+using SimpleCryptography.Encryption;
 
 byte[] key = Aes.GenerateKey("password", "salt");
 byte[] iv = Aes.GenerateIv("password", "salt");
@@ -111,7 +111,7 @@ Console.WriteLine($"Decrypted: {decrypted}");
 
 ### ⚡ **ChaCha20-Poly1305 Encryption**
 ```csharp
-using SimpleSecurity.Encryption;
+using SimpleCryptography.Encryption;
 
 byte[] key = ChaCha20.GenerateKey("password", "salt");
 byte[] nonce = ChaCha20.GenerateNonce();
@@ -127,7 +127,7 @@ Console.WriteLine($"Decrypted: {decrypted}");
 ### 🔑 **Hashing**
 #### SHA-256:
 ```csharp
-using SimpleSecurity.Hashing;
+using SimpleCryptography.Hashing;
 
 string hash = Sha256.Hash("password");
 Console.WriteLine($"SHA-256 Hash: {hash}");
@@ -135,7 +135,7 @@ Console.WriteLine($"SHA-256 Hash: {hash}");
 
 #### SHA-512:
 ```csharp
-using SimpleSecurity.Hashing;
+using SimpleCryptography.Hashing;
 
 string hash = Sha512.Hash("password");
 Console.WriteLine($"SHA-512 Hash: {hash}");
@@ -146,7 +146,7 @@ Console.WriteLine($"SHA-512 Hash: {hash}");
 ### 🧩 **Argon2 Key Derivation**
 #### Argon2i:
 ```csharp
-using SimpleSecurity.Derivation.Argon2;
+using SimpleCryptography.Derivation.Argon2;
 
 string key = Argon2i.DeriveKey("password", "salt", keyLength: 32);
 Console.WriteLine($"Argon2i Derived Key: {key}");
@@ -154,7 +154,7 @@ Console.WriteLine($"Argon2i Derived Key: {key}");
 
 #### Argon2d:
 ```csharp
-using SimpleSecurity.Derivation.Argon2;
+using SimpleCryptography.Derivation.Argon2;
 
 string key = Argon2d.DeriveKey("password", "salt", keyLength: 32);
 Console.WriteLine($"Argon2d Derived Key: {key}");
@@ -162,7 +162,7 @@ Console.WriteLine($"Argon2d Derived Key: {key}");
 
 #### Argon2id:
 ```csharp
-using SimpleSecurity.Derivation.Argon2;
+using SimpleCryptography.Derivation.Argon2;
 
 string key = Argon2id.DeriveKey("password", "salt", keyLength: 32);
 Console.WriteLine($"Argon2id Derived Key: {key}");
