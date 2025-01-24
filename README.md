@@ -19,7 +19,7 @@
 |-------------------|-------------------------------------------|-----------|
 | [`SimpleEncryption`](SimpleEncryption/README.md) | Secure encryption utilities for data protection. | ✅ In progress |
 | [`SimpleSecureData`](SimpleSecureData/README.md) | Types for securely managing sensitive data in memory. | ✅ Available |
-| [`SimpleFiles`](SimpleFiles/README.md) | Types for securely managing sensitive data in memory. | ✅ Available |
+| [`SimpleFiles`](SimpleFiles/README.md) | File and folder management library with built-in encryption support, offering flexible, secure, and efficient handling of file system operations. | ✅ Available |
 
 ---
 
