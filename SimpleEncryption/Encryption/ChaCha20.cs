@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Runtime.Versioning;
 using System.Text;
 
 namespace SimpleEncryption.Encryption {
@@ -57,9 +56,9 @@ namespace SimpleEncryption.Encryption {
             /// <param name="input">String to decrypt.</param>
             /// <param name="key">Key of 32 bytes.</param>
             /// <returns>Decrypted string.</returns>
-            public static string Decrypt(string input, byte[] key) {
+            public static string Decrypt(string input, byte[] key, byte[]? associatedData = null) {
                 var cipherBytes = Convert.FromBase64String(input);
-                var plainBytes = Decrypt(cipherBytes, key);
+                var plainBytes = Decrypt(cipherBytes, key, associatedData);
                 return Encoding.UTF8.GetString(plainBytes);
             }
 
@@ -67,7 +66,7 @@ namespace SimpleEncryption.Encryption {
             /// <param name="input">Message to decrypt.</param>
             /// <param name="key">Key of 32 bytes.</param>
             /// <returns>Dencrypted byte array.</returns>
-            public static byte[] Decrypt(byte[] input, byte[] key) {
+            public static byte[] Decrypt(byte[] input, byte[] key, byte[]? associatedData = null) {
                 if (input.Length == 0) return [];
 
                 if (key == null || key.Length != 32) throw new ArgumentException("Key must be 32 bytes (256 bits).", nameof(key));
@@ -85,12 +84,11 @@ namespace SimpleEncryption.Encryption {
 
                     var plaintext = new byte[ciphertextLength];
 
-                    cipher.Decrypt(nonce, ciphertext, tag, plaintext);
+                    cipher.Decrypt(nonce, ciphertext, tag, plaintext, associatedData);
 
                     return plaintext;
                 }
             }
-
 
             /// <summary> Generates a 32-byte key for ChaCha20-Poly1305.</summary>
             /// <param name="input">Input to derive the key.</param>
