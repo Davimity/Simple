@@ -1,14 +1,23 @@
-﻿using System.Text;
+﻿using SimpleDataCollections.Tree;
+using System.Text;
 using System.Text.Json;
 
 using File = SimpleFiles.File;
 
-namespace SimpleUtilities.DataStructures {
+namespace SimpleDataCollections.Trees {
     public class LazyTree<T> : Tree<T> {
         #region Variables
 
-            private bool _isExpanded = false;
+            private bool _childrenLoaded = false;
             private string path;
+
+        #endregion
+
+        #region Properties
+
+            public bool ChildrenLoaded {
+                get => _childrenLoaded;
+            }
 
         #endregion
 
@@ -34,10 +43,10 @@ namespace SimpleUtilities.DataStructures {
             ///<param name="encryptionAlgorithm"> The encryption algorithm used to decrypt the file. </param>
             public void LoadChildrenFromFile(bool encrypted = false, byte[]? key = null, byte[]? ivOrNonce = null,
                 byte[]? salt = null, File.EncryptionAlgorithm encryptionAlgorithm = File.EncryptionAlgorithm.ChaCha20) {
-                if (_isExpanded) return;
+                if (_childrenLoaded) return;
 
                 if (!File.Exists(path)) {
-                    _isExpanded = true;
+                    _childrenLoaded = true;
                     return;
                 }
 
@@ -45,11 +54,16 @@ namespace SimpleUtilities.DataStructures {
 
                 if(fileBytes.Length == 0) return;
 
-                List<Tree<T>>? children = JsonSerializer.Deserialize<List<Tree<T>>>(fileBytes);
-                if(children == null) return;
+                try {
+                    List<Tree<T>>? children = JsonSerializer.Deserialize<List<Tree<T>>>(fileBytes);
+                    if (children == null) return;
 
-                foreach(var child in children) AddChild(child);
-                _isExpanded = true;
+                    foreach (var child in children) AddChild(child);
+                    _childrenLoaded = true;
+                }catch(Exception e) {
+                    _childrenLoaded = false;
+                    throw new Exception("Error while loading children from file.", e);
+                }
             }
 
             ///<summary> Unloads the children of the tree. </summary>
@@ -61,12 +75,12 @@ namespace SimpleUtilities.DataStructures {
             ///<param name="encryptionAlgorithm"> The encryption algorithm used to encrypt the children. </param>
             public void UnloadChildren(bool saveBeforeUnload = true, bool encrypted = false, byte[]? key = null, byte[]? ivOrNonce = null,
                 byte[]? salt = null, File.EncryptionAlgorithm encryptionAlgorithm = File.EncryptionAlgorithm.ChaCha20) {
-                if (!_isExpanded) return;
+                if (!_childrenLoaded) return;
 
                 if (saveBeforeUnload) SaveChildrenToFile(encrypted, key, ivOrNonce, salt, encryptionAlgorithm);
 
                 RemoveChildren();
-                _isExpanded = false;
+                _childrenLoaded = false;
             }
 
             ///<summary> Saves the children of the tree to a file. </summary>
@@ -88,13 +102,18 @@ namespace SimpleUtilities.DataStructures {
                 }
 
                 var children = new List<Tree<T>>(Children);
-                byte[] data = JsonSerializer.SerializeToUtf8Bytes(children);
 
-                File.Write(Encoding.UTF8.GetBytes(path), data, append: false, encrypt: encrypted, key: key, ivOrNonce: ivOrNonce, salt: salt, encryptionAlgorithm: encryptionAlgorithm);
+                try {
+                    byte[] data = JsonSerializer.SerializeToUtf8Bytes(children);
 
-                for (int i = 0; i < grandchildren.Length; i++) {
-                    Children[i].AddChildren(grandchildren[i]);
-                    grandchildren[i].Clear();
+                    File.Write(Encoding.UTF8.GetBytes(path), data, append: false, encrypt: encrypted, key: key, ivOrNonce: ivOrNonce, salt: salt, encryptionAlgorithm: encryptionAlgorithm);
+
+                    for (int i = 0; i < grandchildren.Length; i++) {
+                        Children[i].AddChildren(grandchildren[i]);
+                        grandchildren[i].Clear();
+                    }
+                }catch(Exception e) {
+                    throw new Exception("Error while saving children to file.", e);
                 }
             }
 

@@ -3,7 +3,7 @@ using System.Text.Json;
 
 using System.Collections;
 
-namespace SimpleUtilities.DataStructures {
+namespace SimpleDataCollections.Tree {
     public class Tree<T> : IDisposable, IEnumerable<Tree<T>>{
         #region Variables
 
