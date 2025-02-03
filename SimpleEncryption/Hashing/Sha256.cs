@@ -2,10 +2,12 @@
 using System.Text;
 
 namespace SimpleEncryption.Hashing {
+    ///<summary> Class for the Sha256 hashing algorithm </summary>
+    ///<remarks> For null input, an exception will be thrown. </remarks>
     public class Sha256 {
         #region Variables
 
-            private static readonly SHA256 Sha = SHA256.Create();
+            private static readonly Sha256Algorithm _algorithm = new();
 
         #endregion
 
@@ -13,63 +15,94 @@ namespace SimpleEncryption.Hashing {
 
             ///<summary> Hashes a string using SHA256 hashing </summary>
             ///<param name="input"> The string to hash </param>
+            ///<param name="parameters"> The parameters to use </param>
             ///<returns> The hashed string </returns>
-            public static string Hash(string input) {
-                var data = Sha.ComputeHash(Encoding.UTF8.GetBytes(input));
+            public static string Hash(string input, Sha256HashParameters parameters) {
+                if (input == null) throw new ArgumentNullException(nameof(input));
+
+                byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+                var data = _algorithm.Hash(inputBytes, parameters);
+
+                CryptographicOperations.ZeroMemory(inputBytes);
 
                 var sb = new StringBuilder();
                 foreach (var b in data) sb.Append(b.ToString("x2"));
+
+                CryptographicOperations.ZeroMemory(data);
+
                 return sb.ToString();
             }
 
-            ///<summary> Hashes a string using SHA256 hashing with salt </summary>
+            ///<summary> Hashes a string using SHA256 hashing </summary>
             ///<param name="input"> The string to hash </param>
             ///<param name="salt"> The salt to add </param>
             ///<returns> The hashed string </returns>
-            public static string Hash(string input, string salt) {
-                var saltedInput = Encoding.UTF8.GetBytes(input + salt);
-                var data = Sha.ComputeHash(saltedInput);
-
-                var sb = new StringBuilder();
-                foreach (var b in data) sb.Append(b.ToString("x2"));
-
-                return sb.ToString();
-            }
+            public static string Hash(string input, string? salt = null) => Hash(input, new Sha256HashParameters { Salt = salt == null ? null : Encoding.UTF8.GetBytes(salt) });
 
             ///<summary> Hashes a byte array using SHA256 hashing </summary>
             ///<param name="input"> The byte array to hash </param>
-            ///<param name="destroyArray"> If true, the input array will be destroyed after the operation </param>
+            ///<param name="parameters"> The parameters to use </param>
             ///<returns> The hashed byte array </returns>
-            public static byte[] Hash(byte[] input, bool destroyArray = false) {
-                var data = Sha.ComputeHash(input);
+            public static byte[] Hash(byte[] input, Sha256HashParameters parameters) => _algorithm.Hash(input, parameters);
 
-                if (destroyArray) CryptographicOperations.ZeroMemory(input);
-                return data;
-            }
-
-            ///<summary> Hashes a byte array using SHA256 hashing with salt </summary>
+            ///<summary> Hashes a byte array using SHA256 hashing </summary>
             ///<param name="input"> The byte array to hash </param>
             ///<param name="salt"> The salt to add </param>
-            ///<param name="destroyArrays"> If true, the input and salt arrays will be destroyed after the operation </param>
             ///<returns> The hashed byte array </returns>
-            public static byte[] Hash(byte[] input, byte[] salt, bool destroyArrays = false) {
-                using (var sha512 = SHA512.Create()) {
-                    var combined = new byte[input.Length + salt.Length];
+            public static byte[] Hash(byte[] input, byte[]? salt = null) => Hash(input, new Sha256HashParameters { Salt = salt });
 
-                    Buffer.BlockCopy(input, 0, combined, 0, input.Length);
-                    Buffer.BlockCopy(salt, 0, combined, input.Length, salt.Length);
+        #endregion
+    }
 
-                    var data = sha512.ComputeHash(combined);
+    ///<summary> Parameters for the Sha256 hashing algorithm </summary>
+    ///<remarks> Initially, salt is null. Use the dispose method to clear the data (salt will be set to null). </remarks>
+    public class Sha256HashParameters : HashParameters {
+        #region Parameters
+                             
+            public byte[]? Salt;
 
-                    CryptographicOperations.ZeroMemory(combined);
+        #endregion
 
-                    if (destroyArrays) {
-                        CryptographicOperations.ZeroMemory(input);
-                        CryptographicOperations.ZeroMemory(salt);
-                    }
+        #region Public methods
 
-                    return data;
+            public override void Dispose() {
+                if(Salt != null) {
+                    CryptographicOperations.ZeroMemory(Salt);
+                    Salt = null;
                 }
+            }
+
+        #endregion
+    }
+
+    ///<summary> Implementation of the Sha256 hashing algorithm </summary>
+    ///<remarks> For null input, an exception will be thrown. </remarks>
+    public class Sha256Algorithm : IHashAlgorithm, IDisposable {
+        #region Variables
+
+            private readonly SHA256 _Sha = SHA256.Create();
+
+        #endregion
+
+        #region Public methods
+
+            public byte[] Hash(byte[] input, HashParameters parameters) {
+                if(input == null) throw new ArgumentNullException(nameof(input));
+                if (parameters is not Sha256HashParameters sha256Params) throw new ArgumentException("Parameters must be of type Sha256HashParameters.");
+
+                var combined = new byte[input.Length + (sha256Params.Salt == null ? 0 : sha256Params.Salt.Length)];
+
+                Buffer.BlockCopy(input, 0, combined, 0, input.Length);
+                if(sha256Params.Salt != null) Buffer.BlockCopy(sha256Params.Salt, 0, combined, input.Length, sha256Params.Salt.Length);
+
+                var data = _Sha.ComputeHash(combined);
+                CryptographicOperations.ZeroMemory(combined);
+
+                return data;       
+            }
+
+            public void Dispose() {
+                _Sha.Dispose();
             }
 
         #endregion
