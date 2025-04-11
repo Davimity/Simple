@@ -223,8 +223,12 @@ namespace SimpleEncryption.Encryption {
                 }
             }
 
+            /// <summary> The HMAC key to use. </summary>
+            /// <remarks> This is not used in GCM mode. If null, default hmac key will be used (not recommended). </remarks>
+            public byte[]? HmacKey = null;
+
             /// <summary> The salt to use for HMAC. </summary>
-            /// <remarks> This is not used in GCM mode. If null, default hmac salt will be used. </remarks>
+            /// <remarks> This is not used in GCM mode. If null, default hmac salt will be used (not recommended). </remarks>
             public byte[]? HmacSalt = null;
 
             /// <summary> The key to use, it must be equal to the key size (in bits) divided by 8. </summary>
@@ -249,8 +253,8 @@ namespace SimpleEncryption.Encryption {
                 }
             }
 
-        /// <summary> The size of the key in bits. </summary>
-        public int KeySize {
+            /// <summary> The size of the key in bits. </summary>
+            public int KeySize {
                 get => _keySize;
                 set {
                     if (value != 128 && value != 192 && value != 256) throw new ArgumentException("Key size must be 128, 192, or 256 bits for AES.");
@@ -334,7 +338,7 @@ namespace SimpleEncryption.Encryption {
                     ivCopy = null;
 
                     if (aesParams.UseHmac) {
-                        byte[] derivedHmacKey = Pbkdf2.DeriveKey(aesParams.Key, aesParams.HmacSalt ?? Encoding.UTF8.GetBytes("AES-HMAC"), aesParams.Key.Length, aesParams.HmacIterations, aesParams.HmacHashAlgorithm);
+                        byte[] derivedHmacKey = Pbkdf2.DeriveKey(aesParams.HmacKey ?? aesParams.Key, aesParams.HmacSalt ?? Encoding.UTF8.GetBytes("AES-HMAC"), aesParams.Key.Length, aesParams.HmacIterations, aesParams.HmacHashAlgorithm);
 
                         byte[] dataToMac = new byte[aesParams.IV.Length + encryptedData.Length];
                         Buffer.BlockCopy(aesParams.IV, 0, dataToMac, 0, aesParams.IV.Length);
@@ -392,7 +396,7 @@ namespace SimpleEncryption.Encryption {
                     Buffer.BlockCopy(ivFromInput, 0, dataToMac, 0, ivFromInput.Length);
                     Buffer.BlockCopy(ciphertext, 0, dataToMac, ivFromInput.Length, ciphertext.Length);
 
-                    byte[] derivedHmacKey = Pbkdf2.DeriveKey(aesParams.Key, aesParams.HmacSalt ?? Encoding.UTF8.GetBytes("AES-HMAC"), aesParams.Key.Length, aesParams.HmacIterations, aesParams.HmacHashAlgorithm);
+                    byte[] derivedHmacKey = Pbkdf2.DeriveKey(aesParams.HmacKey ?? aesParams.Key, aesParams.HmacSalt ?? Encoding.UTF8.GetBytes("AES-HMAC"), aesParams.Key.Length, aesParams.HmacIterations, aesParams.HmacHashAlgorithm);
 
                     byte[] computedMac;
                     using (var hmac = new HMACSHA256(derivedHmacKey)) {
